@@ -1,0 +1,125 @@
+Notes pour utiliser les différentes versions des programmes.
+#-------------------------------------------------------------------#
+Pour les versions en C, il faut installer gcc et libc6-dev :
+        _En_root_ : apt-get install gcc libc6-dev
+
+nracine.c : pour compiler, utilisé  la commande :
+    $ gcc -O3 -Wall -W nracine.c -o nracine
+
+Ça va créer le binaire 'nracine' dans le répertoire courant.
+Pour l'utiliser :
+        $ ./nracine -r2 -p200
+Va calculer racine de 2, avec au moins 200 décimales. Le résultat
+est non arrondi.
+        $ ./nracine -h
+Affiche un message d'aide.
+Après le résultat du calcul le programme affiche divers informations
+au sujet d'allocations mémoire et le temps estimé de calcul.
+C'est une version basée sur l'originale. En 32 bits
+elle peut calculer les racine carrée des nombres inférieurs ou égales
+à 4294967295 ; en 64 bits : 18446744073709551615.
+Remarque, ça serait possible de faire une version qui aurait les
+mêmes limites en 32 et 64 bits. Et même de faire en sorte que
+ce soit plus rapide en 64 bits qu'en 32 bits. Ça reste à faire.
+#-------------------------------------------------------------------#
+racine.c : il faudra d'abord installer la libgmp qui permet
+de réaliser des calculs sur les grands entiers :
+    _En_root_ : apt-get install libgmp-dev
+
+Ensuite, pour compiler :
+    $ gcc -O3 -Wall -W racine.c -lm -lgmp -o racine
+    
+On se sert du binaire 'racine' comme suit :
+    $ ./racine 2 1024 128
+
+le premier nombre est le nombre dont on calcul la racine,
+le second est le nombre de décimales souhaitées, le troisième
+est le nombre de décimales calculées par itérations.
+Là j'ai mis les valeurs par défaut. On peut calculer
+décimales par décimales :
+    $ ./racine 2 20 1
+
+Sans arguments, le programme affiche un résumé de son usage, ainsi
+que son numéro de version.
+#-------------------------------------------------------------------#
+Pour la version en ruby, c'est plus simple, il suffit d'installer
+ruby. J'espère qu'il n'y aura pas de problème. Sur mon système ruby
+est en version 2.1.5, alors que dans la wheezy, c'est la 1.9.3.
+Normalement ça devrait fonctionner.
+Donc l'usage :
+    $ ruby racine.rb 2 1024 128
+La signification des arguments est la même que pour la seconde 
+version en C.
+
+#-------------------------------------------------------------------#
+Pour la version en python, elle fonctionne aussi bien avec
+python 2.7 et python 3.4 (elle devrait donc fonctionner avec python
+3.2 dans wheezy). :
+    $ python racine.py 2 1024 128
+    
+Même usage que pour la version en ruby.
+
+#-------------------------------------------------------------------#
+heron.py caclule la racine carrée d'un nombre entier par la méthode
+de Heron (qui est aussi la méthode de Newton appliquée au calcul
+des racines carrées). On peut chosir le nombre décimales minimum
+justes ou le nombre d'itérations :
+    $ python heron.py -p 1024 2
+ou
+    $ python heron.py -i 10 2
+Le nombre de décimales affichées est de 28. Pour avoir d'avantage de
+décimales affichées il faut utiliser -p :
+    $ python heron.py -i 10 -p 1024 2
+Ça permet de voir combien de décimales sont juste au bout de 10 itérations.
+Le nombre de décimales juste double à chaque itération. Cette version
+est plus lente que racine.py car elle utilise le module decimal
+qui n'est pas fait pour être rapide mais pour cacluler avec des décimales
+justes. Le calcul avec des grands entiers est bien plus rapide.
+#-------------------------------------------------------------------#
+nracine.c est basé sur une la première version que j'ai faite 
+de ce programme sur atari. Elle utilise l'algorithme de base assez
+naïvement.
+Pour la seconde version en C (racine.c), j'ai amélioré l'algo de deux
+manières. D'abord j'ai introduit la méthode de Newton pour calculer plus
+vite le premier paquet de décimale, pour les paquets suivants je fais
+juste une division, ce qui est un peu osé. D'ailleurs je suis obligé de
+faire un test pour voir si le résultat est juste et le corriger le cas
+échéant. Je ne suis absolument pas sûr que ce soit juste dans les cas.
+Les versions en ruby et python utilise un algo plus simple mais basé sur
+le même principe que le précédent. Il y a juste une optimisation que
+j'ai supprimée (celle dont je ne suis pas sûr).
+Dans tous les cas, ce n'est pas la méthode la plus rapide pour calculer
+des racines carrées. Une des méthodes les plus efficace est la méthode
+de Newton… On verra, si j'arriverai à expliquer en quoi consiste cette
+dernière.
+#-------------------------------------------------------------------#
+J'ai ajouté 2 versions en haskell, une en scheme et une en commom lisp.
+Toutes ces versions utilisent le même algo booster à la méthode de
+newton.  La version en scheme (racine.scm) est prévue pour tourner avec
+guile.  Celle en common lisp fonctionne avec sbcl. Dans ces deux
+programmes, une seule fonction contient des spécificités prorpre à guile
+ou à sbcl : la fonction main. Le reste devrait être portable.
+
+Pour les versions en haskell elles devraient compiler avec ghc sans
+problèmes.  On peut même les faire tourner avec hugs, en changeant les
+import, car en haskell98 la hiérarchie des modules étaient différentes.
+
+J'ai mis aussi un programme qui ne calcul que la partie entière de la
+racine carrée en haskell, d'un Int qui est soit un Int32 ou un Int64
+suivant que l'on soit en 32 ou 64 bits. Le calcul prend en compte les
+bonnes limites afin de ne pas faire n'importe quoi.
+
+Et pour terminer, j'ai écrit un programme qui calcul la racine cubique
+par la méthode de la sécante, mais c'est juste expérimental. Il faut
+donner au programme l'intervalle dans lequel calculer et aussi le nombre
+d'itérations souhaitées. Les calculs se font avec 50 décimales. C'est
+aussi de l'haskell : CubeRoot.hs
+
+vim: ft=text tw=72
+
+;; Local Variables:
+;; mode: text
+;; fill-column: 72
+;; eval: (auto-fill-mode)
+;; indent-tabs-mode: nil
+;; End:

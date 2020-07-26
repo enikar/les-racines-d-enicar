@@ -1,0 +1,83 @@
+#----------------------------------------------------------------------#
+TODO: Refaire cette analyse pour le nouvel algo qui est plus juste.
+dichotomie:
+Prinipe de la boucle :
+On s'arrange pour que, avant l'entrèe dans la boucle on ai 
+l'assertion suivante :
+    { med=(inf+sup)//2 et inf < med < sup et inf*inf <= nb <= sup*sup }
+Si  { med <= inf ou sup <= med } alors on arrête.
+D'où la condition évidente pour continuer :
+    { inf < med < sup }.
+Quand cette condition n'est-elle plus respectée ?
+D'abord remarquons, que { inf <= med <= sup }, par construction
+car med = (inf + sup)//2. Dès que { inf+1 == sup }
+alors nous avons { inf == med ou sup == med }.
+Donc la condition { inf < med < sup } est équivalente à
+{ inf+1 < sup }. D'où la boucle :
+    while inf+1 < sup:
+        if med * med > nb:
+            sup=med
+        else:
+            inf=med
+        med=(inf+sup)//2
+
+Ce qui fait qu'en sorti de boucle, le nombre cherché doit être encadré
+entre inf et inf+1.
+(inf+1) ** 2 = inf**2 + 2*inf + 1
+Donc le nb est encadré par :
+ inf**2  <= nb <= inf**2 + 2*inf + 1
+
+La question est : pourquoi la plupart du temps, c'est la valeur inf
+qui est cette partie entière et que de temps en temps, c'est sup ?
+En fait ça vient de l'initialisation ! Je fais :
+    inf=nb
+    while inf * inf > nb:
+        inf //= 2
+    sup=2*inf
+    med=(inf+sup)//2
+
+Supponsons que dans la boucle {inf == 2n+1} et que {inf*inf > nb}. À
+l'itération suivante {inf == n} si {inf*inf <= nb } alors
+l'initialisation produira  {inf==n et sup == 2n et med == 3n//2 }.
+Il faudrait que {inf==n et sup==2n+1}
+
+
+Que se passe-t-il lorsque le test {med * med > nb} est changé en
+{med * med >= nb} ? Ça revient presque au même… La bonne
+condition reste {med * med > nb}, pour garantir que sup reste > au nombre
+cherché et qu'en sortie de boucle la partie entière soit égale à med.
+
+En somme la fonction dichotomie devient :
+    def dichotomie(nb):
+        if nb < 1:
+            return nb
+        inf=1
+        sup=nb
+        med=(inf + sup)//2
+        while inf+1 < sup:
+            if med*med > nb:
+                sup=med
+            else:
+                inf=med
+        return med
+
+Le test {nb < 1} permet d'éviter d'initialiser inf à 0.
+Si on initialise inf=0, sup=1 {nb==1} alors med=0. On sort
+de la boucle avec {med==0 et sup*sup == nb}. Et donc
+la valeur recherchée n'est pas med mais sup. Je veux éviter
+de faire ce test en fin de fonction. En fait, soit on le fait
+à la fin, soit au début. Le test au début est moins couteux
+car il ne demande pas de multiplication ou de faire deux tests :
+    - soit : {sup * sup <= nb}
+    - soit : {med==0 et sup==1} (=> {nb==1})
+
+
+#----------------------------------------------------------------------#
+vim: ft=text tw=72
+
+;; Local Variables:
+;; mode: text
+;; fill-column: 72
+;; eval: (auto-fill-mode)
+;; indent-tabs-mode: nil
+;; End:
