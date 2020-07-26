@@ -2,6 +2,7 @@
 *~
 *.hi
 lracine
+lracine.old.lisp
 nsqrt
 lsqrt
 racine
