@@ -605,6 +605,6 @@ float temps;
 
 /*
  * Local Variables:
- * compile-command: "gcc -O3 -Wall -W -o nracine nracine.c"
+ * compile-command: "gcc -O2 -Wall -W -o nracine nracine.c"
  * End:
  */

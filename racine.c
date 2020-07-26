@@ -237,6 +237,6 @@ int main(int argc, char **argv) {
 
 /* 
  * Local Variables:
- * compile-command: "gcc -Wall -W racine.c -lm -lgmp -o racine"
+ * compile-command: "gcc -Wall -W -O2 racine.c -lm -lgmp -o racine"
  * End:
 */
