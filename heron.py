@@ -22,7 +22,7 @@ def dichotomie(nb):
             sup = med
         else:
             inf = med
-    return med
+    return inf
 
 
 def heron(nb, x):
