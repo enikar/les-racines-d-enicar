@@ -16,13 +16,12 @@ def dichotomie(nb):
         return nb
     inf = 1
     sup = nb
-    med = moyenne(inf, sup)
-    while inf < med:
+    while inf < sup - 1:
+        med = moyenne(inf, sup)
         if med * med > nb:
             sup = med
         else:
             inf = med
-        med = moyenne(inf, sup)
     return med
 
 
@@ -74,7 +73,7 @@ def racine(nb, precision=0, iteration=10):
         raise ValueError
     ent = dichotomie(nb)
     if ent * ent == nb:
-        return nb
+        return ent
     if precision == 0:
         r = heron_by_iteration(nb, ent, iteration)
     else:
