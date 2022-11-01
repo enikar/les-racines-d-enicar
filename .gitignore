@@ -6,4 +6,5 @@ lracine.old.lisp
 nsqrt
 lsqrt
 racine
+racine-wo-opt
 nracine

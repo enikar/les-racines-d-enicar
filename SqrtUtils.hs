@@ -57,9 +57,9 @@ racine nb p base rac = toS (rac env p nb)
 sqrtFloor :: Integer -> Integer
 sqrtFloor nb
     | nb < 2    = nb
-    | otherwise = bisection 1 nb 
+    | otherwise = bisection 1 nb
     where
-        bisection inf sup 
+        bisection inf sup
             | inf == sup-1   = inf
             | mid * mid > nb = bisection inf mid
             | otherwise      = bisection mid sup
@@ -76,9 +76,10 @@ newton u v = go k0 (nextK k0)
   where
     k0 = 1 + v `div` u
     nextK k = (k*k + v) `div` (2*k + u)
-    go k kplus
-      | k == kplus = k
-      | otherwise  = go kplus (nextK kplus)
+    go k kplus =
+      if k == kplus || (kplus == 0 && k == 1)
+      then kplus
+      else go kplus (nextK kplus)
 
 uStart :: Integer -> Integer -> Integer
 uStart b f = 2 * f * b
@@ -112,7 +113,7 @@ tryParseAnIntegral s =
           | otherwise    -> Right n
         Nothing          -> Left ("Argument `" ++ s ++ "' is not a valid Integral")
 
--- j'utilise l'aspect monadique de (Either String a) 
+-- j'utilise l'aspect monadique de (Either String a)
 processArguments :: [String] -> Either String (Integer, Int, Int)
 processArguments [s] = do
    n <- tryParseAnIntegral s :: Either String Integer
@@ -126,14 +127,11 @@ processArguments [sn, sp] = do
 processArguments [sn, sp, sbase] = do
   n <- tryParseAnIntegral sn :: Either String Integer
   p <- tryParseAnIntegral sp :: Either String Int
-  base <- either
-            Left
-            notZero
-            (tryParseAnIntegral sbase :: Either String Int)
+  base <- (tryParseAnIntegral sbase :: Either String Int) >>= notZero
   return (n, p, base)
     where notZero b
             | b == 0    = Left "The granularity must be positive"
             | otherwise = Right b
-  
+
 processArguments [] = Left "Not enough arguments"
 processArguments _  = Left "Too many arguments"

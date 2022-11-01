@@ -17,7 +17,7 @@
 (define *base-racine* 0)
 (define *carre-base* 0)
 
-(define def-base 
+(define def-base
   (lambda b
     "Set constants of the calculus"
     (if (not (null? b))
@@ -28,7 +28,7 @@
             (set! *exp-base* base))))
   *exp-base*))
 
-(def-base 10) 
+(def-base 10)
 
 (define-inlinable (mean a b)
   "Compute the floor of average of two integer"
@@ -36,7 +36,7 @@
 
 (define (sqrt-floor nb)
   "Compute the square root floor of an integer"
-    (if (< nb 2)  
+    (if (< nb 2)
          nb
         (let loop ((inf 1)
                    (sup nb))
@@ -58,7 +58,7 @@
   (let loop ((k (+ 1 (quotient v u))))
     (let ((kplus (quotient (+ (* k k) v)
                           (+ (* 2 k) u))))
-      (if (= k kplus)
+      (if (or (= k kplus) (and (zero? k) (= 1 kplus)))
           k
           (loop kplus)))))
 
@@ -102,7 +102,7 @@
           (cons "." (map conv-frac fracs)))))))
 
 
-(define (usage prog) 
+(define (usage prog)
   "Display usage then exit"
   (display "usage : ")
   (display prog)
@@ -119,7 +119,7 @@
             (newline)
             (exit 1))
           n)))
-          
+
 (define (print x)
   "Display an object follow by a new line"
   (begin
@@ -131,7 +131,7 @@
   (let* ((args (cdr arguments))
          (prog (car arguments))
          (n (length args)))
-      (case n 
+      (case n
         ((1) (let ((nb (conversion (car args))))
                (print (racine nb 30))))
         ((2) (let ((nb (conversion (car args)))

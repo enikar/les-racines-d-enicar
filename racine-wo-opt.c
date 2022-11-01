@@ -93,7 +93,7 @@ void racine(unsigned long nb, unsigned long p) {
   double fsp ;
   double esp;
   double entlg;
-  mpz_t u, v, k, k1, s, v1, d, base_racine, carre_base, zero, one;
+  mpz_t u, v, k, k1, v1, d, base_racine, carre_base, zero, one;
 
   /* calcul de la partie entiére */
   ent = dichotomie(nb);
@@ -134,66 +134,40 @@ void racine(unsigned long nb, unsigned long p) {
 
   mpz_init(k);
   _mpz_realloc (k, (mp_size_t) ceil(fsp));
-  mpz_init(s);
-  _mpz_realloc (s, (mp_size_t) ceil(fsp + entlg));
+  //mpz_init(s);
+  //_mpz_realloc (s, (mp_size_t) ceil(fsp + entlg));
   mpz_init(v1);
   _mpz_realloc (v1, (mp_size_t) ceil (fsp * 2 + entlg));
 
   /* calcul en deux temps : plus rapide */
-  mpz_fdiv_q(d, v, u);
-  mpz_add_ui(d, d, 1UL);
-  mpz_init_set_ui(zero, 0UL);
-  mpz_init_set_ui(one, 1UL);
-  do {
-    mpz_set(k, d);
-    mpz_mul(k1, d, d);
-    mpz_add(k1, k1, v);
-    mpz_mul_ui(d, d, 2);
-    mpz_add(d, d, u);
-    mpz_fdiv_q(d, k1, d);
-  } while (mpz_cmp(k, d) != 0 &&
-           (mpz_cmp(d, zero) != 0 || mpz_cmp(k, one) != 0));
-  affiche(d);
-
-  if ( --niter == 0 )
-    return;
-  /* seconde partie : initialisation */
-  mpz_add(s, d, u);
-  mpz_mul(v1, s, d);
-  mpz_sub(v, v, v1);
-  mpz_mul(v, v, carre_base);
-  mpz_add(u, s, d);
-  mpz_mul(u, u, base_racine);
-
-  mpz_clears(v1, s, k, zero, one);
-  /* boucle principale : sans autre imbrication de boucle */
+  mpz_init_set_ui(zero, 0);
+  mpz_init_set_ui(one, 1);
   while ( 1 ) {
-   mpz_fdiv_q(d, v, u);
-   mpz_add(k1, d, u);
-   mpz_mul(k1, k1, d);
-   if ( mpz_cmp(k1, v) <= 0 ) {
-     affiche(d);
-     if ( --niter == 0 )
-       return;
-     mpz_sub(v, v, k1);
-     mpz_mul(v, v, carre_base);
-     mpz_mul_ui(d, d, 2UL);
-     mpz_add(u, u, d);
-     mpz_mul(u, u, base_racine);
-   }
-   else {
-     mpz_sub_ui(d, d, 1UL);
-     affiche(d);
-     if( --niter == 0 )
-       return;
-     mpz_add(k1, u, d);
-     mpz_mul(u, k1, d);
-     mpz_sub(v, v, u);
-     mpz_mul(v, v, carre_base);
-     mpz_add(u, k1, d);
-     mpz_mul(u, u, base_racine);
-   }
-  } /* while ( 1 ) */
+    mpz_fdiv_q(d, v, u);
+    mpz_add_ui(d, d, 1);
+    while ( 1 ) {
+      mpz_set(k, d);
+      mpz_mul(k1, d, d);
+      mpz_add(k1, k1, v);
+      mpz_mul_ui(d, d, 2);
+      mpz_add(d, d, u);
+      mpz_fdiv_q(d, k1, d);
+      if (mpz_cmp(k, d) == 0 ||
+           (mpz_cmp(d, zero) == 0 && mpz_cmp(k, one) == 0))
+          break;
+    }
+    affiche(d);
+
+    if ( --niter == 0 )
+      return;
+    mpz_add(v1, u, d);
+    mpz_mul(v1, v1, d);
+    mpz_sub(v, v, v1);
+    mpz_mul(v, v, carre_base);
+    mpz_mul_ui(d, d, 2);
+    mpz_add(u, u, d);
+    mpz_mul(u, u, base_racine);
+  }
 } /* racine */
 
 int main(int argc, char **argv) {
@@ -238,6 +212,6 @@ int main(int argc, char **argv) {
 
 /*
  * Local Variables:
- * compile-command: "gcc -Wall -W -O2 racine.c -lm -lgmp -o racine"
+ * compile-command: "gcc -Wall -W -O2 racine.c -lm -lgmp -o racine-wo-opt"
  * End:
 */

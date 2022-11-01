@@ -28,7 +28,7 @@ class Racine
     loop do
       k2 = k1
       k1 = (k1 * k1 + v) / (2 * k1 + u)
-      return k2 if k1 == k2
+      return k1 if k1 == k2 || (k1.zero? && k2 == 1)
     end
   end
 
@@ -77,22 +77,12 @@ class Racine
     end
   end
 
-  def conv_frac(frac)
-    s = frac.to_s
-    delta = @base - s.size
-    if delta.zero?
-      s
-    else
-      ('0' * delta) + s
-    end
-  end
-
   def racine
     floor, *fracs = rac
     e = floor.to_s
     return e if fracs.empty?
 
-    ls = fracs.collect { |f| conv_frac f }
+    ls = fracs.collect { |f| format("%0#{@base}d", f) }
     ([e, '.'] + ls).join('')
   end
 

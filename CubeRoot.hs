@@ -137,7 +137,8 @@ droites val upper  = iterate f
 -- Fonctions auxiliaires pour obtenir et vérifier les arguments de la cli
 getValues :: [String] -> Either String (Double, Double, Double, Int)
 getValues args
-  | lg == 4          = either Left r (getValues' args)
+  -- | lg == 4          = either Left r (getValues' args)
+  | lg == 4          = getValues' args >>= r
   | lg >=0 && lg < 4 = Left "Not enough arguments"
   | otherwise        = Left "Too many arguments"
   where
@@ -153,13 +154,14 @@ getValues args
                      <> show (cube x2)
                      <> "' is false")
 
-getValues' :: [String] -> Either String (Double, Double, Double, Int) 
+getValues' :: [String] -> Either String (Double, Double, Double, Int)
 getValues' [sv, sx1, sx2, siter] = do
   v <- tryParseDouble sv
   x1 <- tryParseDouble sx1
   x2 <- tryParseDouble sx2
   iter <- tryParseInt siter
   return (v, x1, x2, iter)
+getValues' _ = error "Internal error: getValues' need exactly a list of 4 strings."
 
 tryParseDouble :: String -> Either String Double
 tryParseDouble s = case readMaybe s :: Maybe Double of
@@ -172,4 +174,3 @@ tryParseInt s = case readMaybe s :: Maybe Int of
                 | n <= 0        -> Left "The number of iteration must be a positive Int"
                 | otherwise     -> Right n
         _                       -> Left ("Parameter for iter `" <> s <> "' isn't an Int")
-

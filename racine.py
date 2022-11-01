@@ -2,7 +2,6 @@
 """ calcul de racine carrée de nombre entier en python. Le 20-04-2015.
 Revue le 20-07-2020."""
 
-
 import sys
 
 
@@ -13,7 +12,7 @@ def moyenne(a, b):
 
 def sqrt_floor(nb):
     """Calcul de la partie entière de la racine carrée d'un nombre entier"""
-    if nb <= 1:
+    if nb < 2:
         return nb
     inf = 1
     sup = nb
@@ -32,9 +31,9 @@ def newton(u, v):
     while True:
         k = kplus
         kplus = (k * k + v) // (2 * k + u)
-        if k == kplus:
+        if k == kplus or (k == 1 and kplus == 0):
             break
-    return k
+    return kplus
 
 
 def iterations(p, exp_base):
@@ -53,7 +52,8 @@ def rac(nb, p0, exp_base):
         return [ent]
     r = [ent]
     base_racine = 10**exp_base
-    carre_base = 10**(2*exp_base)
+    # carre_base = 10**(2*exp_base)
+    carre_base = base_racine * base_racine
     u = 2 * ent * base_racine
     v = (nb - ent * ent) * carre_base
     while True:
@@ -74,17 +74,17 @@ avec p décimales. exp_base contrôle la granularité du calcul, c'est
 à dire le nombre de décimales calculées par itérations.
 Retourne la racine carrée du nombre sous forme de chaîne."""
     floor, *fracs = rac(nb, p, exp_base)
-    s = "{0}".format(floor)
+    s = str(floor)
     if len(fracs) == 0:
         return s
     else:
-        fs = ["{0:0{width:d}}".format(frac, width=exp_base) for frac in fracs]
+        fs = [f"{frac:0{exp_base:d}}" for frac in fracs]
         return ''.join([s, '.'] + fs)
 
 
 def usage():
     """Affiche l'usage et termine le programme"""
-    print("Usage: %s <nombre> <précision> <granularité>" % sys.argv[0])
+    print(f"Usage: {sys.argv[0]} <nombre> <précision> <granularité>")
     s = "où <nombre>, <précision> et <granularité> sont des entiers positifs"
     print(s)
     sys.exit(1)

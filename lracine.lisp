@@ -89,7 +89,10 @@
       for k = (1+ (quotient v u))
         then kplus
       for kplus = (next-k k)
-      when (= k kplus) do (return k))))
+      when (or (= k kplus)
+               (and (zerop kplus)
+                    (= 1 k)))
+        do (return kplus))))
 
 (defun iterations (p0)
   "Compute the number of iterations"
