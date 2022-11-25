@@ -66,19 +66,30 @@
 (defmacro mean (a b)
   `(floor (+ ,a ,b) 2))
 
+;; (defun sqrt-floor (nb)
+;;   "Compute the integer part of square root of nb."
+;;   (if (< nb 2)
+;;       nb
+;;       (loop
+;;         for test = T  then (> (* med med) nb)
+;;         for inf = 1  then (if test inf med)
+;;         for sup = nb then (if test med sup)
+;;         for med = (mean inf sup)
+;;         when (= (1+ inf)  sup)
+;;           return inf)))
+;; Recursive version
 (defun sqrt-floor (nb)
   "Compute the integer part of square root of nb."
-  (if (< nb 2)
-      nb
-      (loop
-        with inf = 1
-        with sup = nb
-        with med = 0
-        when (= (1+ inf)  sup) do (return inf)
-        do (setq med (mean inf sup))
-        if (> (* med med) nb)
-             do (setq sup med)
-        else do (setq inf med))))
+  (labels ((bissection (inf sup)
+             (if (= (1+ inf) sup)
+                 inf
+                 (let ((med (mean inf sup)))
+                   (if (> (* med med) nb)
+                       (bissection inf med)
+                       (bissection med sup))))))
+    (if (< nb 2)
+        nb
+        (bissection 1 nb))))
 
 (defun newton (u v)
   "Compute the next decimal packet."
@@ -90,9 +101,8 @@
         then kplus
       for kplus = (next-k k)
       when (or (= k kplus)
-               (and (zerop kplus)
-                    (= 1 k)))
-        do (return kplus))))
+               (and (zerop kplus) (= 1 k)))
+        return kplus)))
 
 (defun iterations (p0)
   "Compute the number of iterations"
