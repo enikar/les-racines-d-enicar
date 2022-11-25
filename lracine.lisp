@@ -147,11 +147,15 @@
               (cons "." (mapcar #'conv-frac fracs))
               NIL))))))
 
+(defun argv0 ()
+  (car (uiop:raw-command-line-arguments)))
+
 (defun usage ()
   "Print usage and exit"
-  (let ((prog-name (car sb-ext:*posix-argv*)))
+  ;; (let ((prog-name (car sb-ext:*posix-argv*)))
+  (let ((prog-name (argv0)))
     (format T "~&Usage: ~A nb [precision [granularity]]~%" prog-name)
-    (sb-ext:exit :code 1)))
+    (uiop:quit 1)))
 
 (defun convert (s)
   "Convert a string to an integer. Check if argument is positive"
@@ -165,9 +169,12 @@
 (defun put-str-ln (x)
   (format T "~&~A~%" x))
 
+(defun argv ()
+  (uiop:command-line-arguments))
+
 (defun main ()
   "The entry point of the program"
-  (let* ((args (uiop:command-line-arguments))
+  (let* ((args (argv))
          (n (length args)))
     (case n
       ((1) (let ((nb (convert (car args))))
