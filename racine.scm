@@ -58,8 +58,8 @@
   (let loop ((k (+ 1 (quotient v u))))
     (let ((kplus (quotient (+ (* k k) v)
                           (+ (* 2 k) u))))
-      (if (or (= k kplus) (and (zero? k) (= 1 kplus)))
-          k
+      (if (or (= k kplus) (and (zero? kplus) (= 1 k)))
+          kplus
           (loop kplus)))))
 
 (define (rac nb p0)
